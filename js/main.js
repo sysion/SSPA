@@ -1,3 +1,8 @@
+import Lagos from './lagos.js';		//MUST include path
+import Nigeria from './nigeria.js';
+import Africa from './africa.js';
+import World from './world.js';
+
 let main = document.getElementById('main');
 let lagos = document.getElementById('lagos');
 let nigeria = document.getElementById('nigeria');
@@ -8,26 +13,23 @@ let world = document.getElementById('world');
 const pageRoutes = [
 	{
 		path: '/lagos',
-		template: '<h1>Lagos</h1>'
+		file: Lagos,
 	},
 	{
 		path: '/sspa/nigeria',
-		template: '<h1>Nigeria</h1>'
+		file: Nigeria,
 	},
 	{
 		path: '/sspa/africa',
-		template: '<h1>Africa</h1>',
+		file: Africa,
 	},
 	{
 		path: '/sspa/world',
-		template: '<h1>World</h1>',
+		file: World,
 	},
 ];
 
 class SpaRouter {
-	routes;
-	pageOrigin;
-	defaultPath;
 	
 	constructor(routes) {
 		this.routes = routes;
@@ -38,7 +40,7 @@ class SpaRouter {
 		if (this.pageOrigin === 'null'){
 			this.pageOrigin = '';
 		}
-		
+
 		let pathUrl = this.splitPath(pathName);
 
 		this.checkRoute(pathUrl, main);
@@ -46,21 +48,20 @@ class SpaRouter {
 
 	checkRoute(pagePath, container) {
 		let route = this.selectRoute(pagePath);
-		container.innerHTML = route.template;
+		container.innerHTML = route.file.page();
 		window.history.pushState({}, '', pagePath);
 	}
 
 	selectRoute(pagePath) {	
 		let shortPath;	
-		if (pagePath.indexOf('index.html') !== -1 || pagePath === '/'){
+		if (pagePath.indexOf('index.html') !== -1){
 			shortPath = this.defaultPath;
 		}
 		else{
 			shortPath = pagePath;
 		}	
-		
 		let route = this.routes.find(function(elem){
-			return elem.path === shortPath;
+			return elem.path == shortPath;
 		});
 		
 		return route;
@@ -70,7 +71,7 @@ class SpaRouter {
 		let paths = pagePath.split(this.pageOrigin);	//[]
 		paths = paths[paths.length - 1];	//get actual path
 
-		if (paths.indexOf('index.html') !== -1){
+		if (paths.indexOf('index.html') !== -1 || paths === '/'){
 			paths = this.defaultPath;
 			return paths;
 		}
@@ -87,16 +88,16 @@ let sspa = new SpaRouter(pageRoutes);
 document.addEventListener('click', function(e){
 	e.preventDefault();  //prevents navigation to actual url
 
-	if (e.target === lagos && e.target.origin === sspa.pageOrigin){
+	if (e.target == lagos && e.target.origin == sspa.pageOrigin){
 		sspa.checkRoute('/lagos', main);
 	}
-	else if (e.target === nigeria && e.target.origin === sspa.pageOrigin){
+	else if (e.target == nigeria && e.target.origin == sspa.pageOrigin){
 		sspa.checkRoute('/sspa/nigeria', main);
 	}
-	else if (e.target === africa && e.target.origin === sspa.pageOrigin){
+	else if (e.target == africa && e.target.origin == sspa.pageOrigin){
 		sspa.checkRoute('/sspa/africa', main);
 	}
-	else if (e.target === world && e.target.origin === sspa.pageOrigin){
+	else if (e.target == world && e.target.origin == sspa.pageOrigin){
 		sspa.checkRoute('/sspa/world', main);
 	}
 });
